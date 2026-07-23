@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useCart } from "./CartProvider";
 
 const categories = [
-  { name: "Мебель", slug: "furniture" },
-  { name: "Свет", slug: "lighting" },
-  { name: "Текстиль", slug: "textile" },
-  { name: "Керамика", slug: "ceramics" },
+  { name: "Furniture", slug: "furniture" },
+  { name: "Lighting", slug: "lighting" },
+  { name: "Textiles", slug: "textile" },
+  { name: "Ceramics", slug: "ceramics" },
 ];
 
 export default function Header() {
@@ -20,7 +20,7 @@ export default function Header() {
           NextShop
         </Link>
 
-        <nav className="hidden gap-6 md:flex" aria-label="Категории каталога">
+        <nav className="hidden gap-6 md:flex" aria-label="Catalog categories">
           {categories.map((c) => (
             <Link
               key={c.slug}
@@ -35,9 +35,9 @@ export default function Header() {
         <Link
           href="/cart"
           className="relative text-sm font-medium"
-          aria-label={`Корзина, товаров: ${itemCount}`}
+          aria-label={`Cart, items: ${itemCount}`}
         >
-          Корзина
+          Cart
           {itemCount > 0 && (
             <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-clay px-1 text-xs text-paper">
               {itemCount}

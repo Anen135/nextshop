@@ -3,18 +3,18 @@ import { db } from "@/lib/db";
 import ProductCard from "@/components/ProductCard";
 
 export const metadata: Metadata = {
-  title: "Каталог",
-  description: "Мебель, свет, текстиль и керамика для дома — каталог NextShop.",
+  title: "Catalog",
+  description: "Furniture, lighting, textiles, and ceramics for the home — NextShop catalog.",
 };
 
 export const revalidate = 300;
 
 const categories = [
-  { name: "Все товары", slug: undefined },
-  { name: "Мебель", slug: "furniture" },
-  { name: "Свет", slug: "lighting" },
-  { name: "Текстиль", slug: "textile" },
-  { name: "Керамика", slug: "ceramics" },
+  { name: "All Products", slug: undefined },
+  { name: "Furniture", slug: "furniture" },
+  { name: "Lighting", slug: "lighting" },
+  { name: "Textiles", slug: "textile" },
+  { name: "Ceramics", slug: "ceramics" },
 ];
 
 export default async function HomePage({
@@ -32,13 +32,13 @@ export default async function HomePage({
   return (
     <div className="mx-auto max-w-content px-6 py-12">
       <section className="mb-12 max-w-xl">
-        <p className="eyebrow mb-3">Каталог</p>
+        <p className="eyebrow mb-3">Catalog</p>
         <h1 className="font-display text-4xl leading-tight text-ink">
-          Предметы, сделанные, чтобы служить десятилетиями
+          Pieces made to last for decades
         </h1>
       </section>
 
-      <nav className="mb-10 flex flex-wrap gap-x-6 gap-y-2 border-b border-line pb-6" aria-label="Фильтр по категориям">
+      <nav className="mb-10 flex flex-wrap gap-x-6 gap-y-2 border-b border-line pb-6" aria-label="Filter by category">
         {categories.map((c) => {
           const isActive = c.slug === activeCategory || (!c.slug && !activeCategory);
           return (
@@ -54,7 +54,7 @@ export default async function HomePage({
       </nav>
 
       {products.length === 0 ? (
-        <p className="text-ink/60">В этой категории пока нет товаров.</p>
+        <p className="text-ink/60">No products in this category yet.</p>
       ) : (
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-4">
           {products.map((product, i) => (

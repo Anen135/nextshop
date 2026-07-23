@@ -1,4 +1,4 @@
-/** Интеграция с CRM: создаёт контакт и сделку при оплате заказа. */
+/** CRM integration: creates contact and deal upon order payment. */
 
 import type { Order, Customer, OrderItem, Product } from "@prisma/client";
 
@@ -13,7 +13,7 @@ export interface CrmClient {
 
 const provider = process.env.CRM_PROVIDER ?? "mock";
 
-/** amoCRM: сделки через Leads API. */
+/** amoCRM: deals via Leads API. */
 class AmoCrmClient implements CrmClient {
   private baseUrl = process.env.CRM_API_URL;
   private token = process.env.CRM_API_TOKEN;
@@ -29,7 +29,7 @@ class AmoCrmClient implements CrmClient {
       "Content-Type": "application/json",
     };
 
-    // Создаём контакт по email
+    // Create contact by email
     const contactRes = await fetch(`${this.baseUrl}/contacts`, {
       method: "POST",
       headers,
@@ -46,13 +46,13 @@ class AmoCrmClient implements CrmClient {
     const contactData = await contactRes.json();
     const contactId = contactData._embedded?.contacts?.[0]?.id?.toString() ?? "";
 
-    // Создаём сделку, привязываем контакт
+    // Create deal, link contact
     const dealRes = await fetch(`${this.baseUrl}/leads`, {
       method: "POST",
       headers,
       body: JSON.stringify([
         {
-          name: `Заказ ${order.number}`,
+          name: `Order ${order.number}`,
           price: Math.round(order.totalCents / 100),
           pipeline_id: this.pipelineId ? Number(this.pipelineId) : undefined,
           _embedded: { contacts: [{ id: Number(contactId) }] },
@@ -66,11 +66,11 @@ class AmoCrmClient implements CrmClient {
   }
 }
 
-/** Мок-клиент, чтобы демо работало без ключей CRM. */
+/** Mock client so demo works without CRM keys. */
 class MockCrmClient implements CrmClient {
   async upsertDeal(order: OrderWithRelations) {
     console.log(
-      `[CRM mock] Сделка создана для заказа ${order.number} на сумму ${(
+      `[CRM mock] Deal created for order ${order.number} in the amount of ${(
         order.totalCents / 100
       ).toFixed(2)} ${order.currency}`
     );
@@ -85,7 +85,7 @@ export function getCrmClient(): CrmClient {
   switch (provider) {
     case "amocrm":
       return new AmoCrmClient();
-    // case "hubspot": return new HubSpotCrmClient(); — добавляется аналогично
+    // case "hubspot": return new HubSpotCrmClient(); — added similarly
     default:
       return new MockCrmClient();
   }

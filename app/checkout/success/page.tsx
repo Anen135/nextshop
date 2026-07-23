@@ -7,18 +7,18 @@ export default function CheckoutSuccessPage({
 }) {
   return (
     <div className="mx-auto max-w-content px-6 py-24 text-center">
-      <p className="eyebrow mb-3">Спасибо</p>
-      <h1 className="font-display text-3xl">Заказ принят</h1>
+      <p className="eyebrow mb-3">Thank you</p>
+      <h1 className="font-display text-3xl">Order confirmed</h1>
       {searchParams.order && (
         <p className="mt-4 text-ink/70">
-          Номер заказа: <span className="font-medium text-ink">{searchParams.order}</span>
+          Order number: <span className="font-medium text-ink">{searchParams.order}</span>
         </p>
       )}
       <p className="mt-2 text-sm text-ink/50">
-        Подтверждение отправлено на e-mail. Менеджер свяжется с вами для уточнения деталей доставки.
+        Confirmation has been sent to your email. Our manager will contact you for delivery details.
       </p>
       <Link href="/" className="btn-primary mt-8 inline-flex">
-        Вернуться в каталог
+        Back to catalog
       </Link>
     </div>
   );

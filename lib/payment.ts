@@ -1,10 +1,10 @@
 import Stripe from "stripe";
 
-/** Обёртка над Stripe — единая точка для смены платёжного провайдера. */
+/** Stripe wrapper — single point to swap payment providers. */
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
-// Без ключей — мок-режим, чтобы проект запускался без реальных credentials
+// Without keys — mock mode, so the project runs without real credentials
 const isMock = !stripeSecretKey;
 
 const stripe = stripeSecretKey
@@ -28,7 +28,7 @@ export async function createPaymentIntent(
   params: CreatePaymentIntentParams
 ): Promise<PaymentIntentResult> {
   if (isMock || !stripe) {
-    // Мок-режим: эмулируем успешный платёж без ключей Stripe
+    // Mock mode: emulate successful payment without Stripe keys
     return {
       id: `pi_mock_${params.orderId}`,
       clientSecret: `pi_mock_${params.orderId}_secret`,
@@ -51,7 +51,7 @@ export async function createPaymentIntent(
   };
 }
 
-/** Проверяет подпись Stripe webhook. */
+/** Verifies Stripe webhook signature. */
 export function constructWebhookEvent(rawBody: string, signature: string): Stripe.Event {
   if (isMock || !stripe) {
     throw new Error("Webhook verification requires a real STRIPE_SECRET_KEY");

@@ -1,4 +1,4 @@
-// Схема данных интернет-магазина.
+// E-commerce data schema.
 
 generator client {
   provider = "prisma-client-js"
@@ -23,7 +23,7 @@ model Product {
   slug        String   @unique
   title       String
   description String
-  // Цена в копейках — без ошибок округления float
+  // Price in cents — no float rounding errors
   priceCents  Int
   currency    String   @default("RUB")
   imageUrl    String
@@ -45,7 +45,7 @@ model Customer {
   email     String   @unique
   name      String?
   phone     String?
-  // Внешний ID сделки/контакта в CRM
+  // External deal/contact ID in CRM
   crmContactId String?
   createdAt DateTime @default(now())
 
@@ -55,7 +55,7 @@ model Customer {
 
 model Cart {
   id         String     @id @default(cuid())
-  // Гостевая корзина по cookie
+  // Guest cart by cookie
   sessionId  String     @unique
   customerId String?
   customer   Customer?  @relation(fields: [customerId], references: [id])
@@ -85,7 +85,7 @@ enum OrderStatus {
 
 model Order {
   id             String      @id @default(cuid())
-  number         String      @unique // человекочитаемый номер заказа, напр. NS-100245
+  number         String      @unique // human-readable order number, e.g. NS-100245
   customerId     String
   customer       Customer    @relation(fields: [customerId], references: [id])
   status         OrderStatus @default(PENDING_PAYMENT)
@@ -96,7 +96,7 @@ model Order {
   shippingPhone  String
   shippingAddress String
 
-  // Ключи платежного провайдера и CRM — для идемпотентности webhook'ов
+  // Payment provider and CRM keys — for webhook idempotency
   paymentIntentId String? @unique
   crmDealId       String?
 
@@ -115,6 +115,6 @@ model OrderItem {
   productId  String
   product    Product @relation(fields: [productId], references: [id])
   quantity   Int
-  // Цена на момент покупки
+  // Price at the time of purchase
   priceCents Int
 }

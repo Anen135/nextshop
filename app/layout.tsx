@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { CartProvider } from "@/components/CartProvider";
 
-// PT Serif — с кириллицей, в отличие от Fraunces/Playfair
+// PT Serif supports Cyrillic, unlike Fraunces/Playfair
 const display = PT_Serif({
   subsets: ["latin", "cyrillic"],
   weight: ["400", "700"],
@@ -23,14 +23,14 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "NextShop — предметы для дома",
+    default: "NextShop — home goods",
     template: "%s — NextShop",
   },
   description:
-    "Мебель, свет, текстиль и керамика для дома. Мануфактурное производство, доставка по России.",
+    "Furniture, lighting, textiles, and ceramics for the home. Artisanal production, delivery across Russia.",
   openGraph: {
     type: "website",
-    locale: "ru_RU",
+    locale: "en_US",
     siteName: "NextShop",
   },
   robots: { index: true, follow: true },
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" className={`${display.variable} ${body.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body className="min-h-screen bg-paper font-body text-ink antialiased">
         <CartProvider>
           <Header />

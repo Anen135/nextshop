@@ -2,7 +2,7 @@ export type Money = { amountCents: number; currency: string };
 
 export function formatMoney({ amountCents, currency }: Money): string {
   const amount = amountCents / 100;
-  return new Intl.NumberFormat("ru-RU", {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
     maximumFractionDigits: 0,

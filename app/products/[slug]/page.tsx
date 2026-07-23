@@ -13,7 +13,7 @@ async function getProduct(slug: string) {
   return db.product.findUnique({ where: { slug }, include: { category: true } });
 }
 
-// Пререндерим карточки товаров статически в билд-тайме
+// Pre-render product cards statically at build time
 export async function generateStaticParams() {
   const products = await db.product.findMany({ select: { slug: true } });
   return products.map((p) => ({ slug: p.slug }));
@@ -38,7 +38,7 @@ export default async function ProductPage({ params }: Props) {
   const product = await getProduct(params.slug);
   if (!product) notFound();
 
-  // JSON-LD Product для rich snippets в поисковиках
+  // JSON-LD Product for rich snippets in search engines
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -85,7 +85,7 @@ export default async function ProductPage({ params }: Props) {
           <div className="mt-8">
             <AddToCartButton productId={product.id} inStock={product.stock > 0} />
             <p className="mt-3 text-xs text-ink/50">
-              {product.stock > 0 ? `В наличии: ${product.stock} шт.` : "Ожидается пополнение"}
+              {product.stock > 0 ? `In stock: ${product.stock} pcs.` : "Restocking expected"}
             </p>
           </div>
         </div>

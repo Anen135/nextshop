@@ -43,15 +43,15 @@ export default function CartPage() {
   }
 
   if (loading) {
-    return <div className="mx-auto max-w-content px-6 py-12 text-ink/50">Загружаем корзину…</div>;
+    return <div className="mx-auto max-w-content px-6 py-12 text-ink/50">Loading cart…</div>;
   }
 
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-content px-6 py-24 text-center">
-        <p className="font-display text-2xl">Корзина пуста</p>
+        <p className="font-display text-2xl">Cart is empty</p>
         <Link href="/" className="btn-primary mt-6 inline-flex">
-          В каталог
+          Browse catalog
         </Link>
       </div>
     );
@@ -59,7 +59,7 @@ export default function CartPage() {
 
   return (
     <div className="mx-auto max-w-content px-6 py-12">
-      <h1 className="font-display text-3xl mb-8">Корзина</h1>
+      <h1 className="font-display text-3xl mb-8">Cart</h1>
 
       <div className="grid gap-10 lg:grid-cols-[1fr_320px]">
         <ul className="divide-y divide-line">
@@ -78,9 +78,9 @@ export default function CartPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <label className="text-xs text-ink/50" htmlFor={`qty-${item.productId}`}>
-                    Кол-во
-                  </label>
+                    <label className="text-xs text-ink/50" htmlFor={`qty-${item.productId}`}>
+                      Qty
+                    </label>
                   <input
                     id={`qty-${item.productId}`}
                     type="number"
@@ -94,7 +94,7 @@ export default function CartPage() {
                     onClick={() => updateQuantity(item.productId, 0)}
                     className="text-xs text-ink/50 underline hover:text-clay"
                   >
-                    Удалить
+                      Remove
                   </button>
                 </div>
               </div>
@@ -104,12 +104,12 @@ export default function CartPage() {
 
         <aside className="h-fit border border-line p-6">
           <div className="flex justify-between text-sm">
-            <span className="text-ink/60">Итого</span>
+            <span className="text-ink/60">Total</span>
             <span className="font-medium">{formatMoney({ amountCents: totalCents, currency: "RUB" })}</span>
           </div>
-          <p className="mt-2 text-xs text-ink/50">Доставка рассчитывается на следующем шаге</p>
+          <p className="mt-2 text-xs text-ink/50">Shipping calculated at next step</p>
           <Link href="/checkout" className="btn-primary mt-6 w-full">
-            Оформить заказ
+            Proceed to checkout
           </Link>
         </aside>
       </div>

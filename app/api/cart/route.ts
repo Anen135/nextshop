@@ -16,7 +16,7 @@ const addItemSchema = z.object({
   quantity: z.number().int().min(1).max(99).default(1),
 });
 
-// POST /api/cart — добавить товар
+// POST /api/cart — add item
 export async function POST(req: NextRequest) {
   const body = addItemSchema.safeParse(await req.json());
   if (!body.success) {
@@ -28,10 +28,10 @@ export async function POST(req: NextRequest) {
 
   const product = await db.product.findUnique({ where: { id: productId } });
   if (!product) {
-    return NextResponse.json({ error: "Товар не найден" }, { status: 404 });
+    return NextResponse.json({ error: "Product not found" }, { status: 404 });
   }
   if (product.stock < quantity) {
-    return NextResponse.json({ error: "Недостаточно товара на складе" }, { status: 409 });
+    return NextResponse.json({ error: "Not enough stock" }, { status: 409 });
   }
 
   await db.cartItem.upsert({
@@ -56,7 +56,7 @@ const updateItemSchema = z.object({
   quantity: z.number().int().min(0).max(99),
 });
 
-// PATCH /api/cart — изменить количество (0 = удалить)
+// PATCH /api/cart — change quantity (0 = remove)
 export async function PATCH(req: NextRequest) {
   const body = updateItemSchema.safeParse(await req.json());
   if (!body.success) {

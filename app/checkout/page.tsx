@@ -23,7 +23,7 @@ export default function CheckoutPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(typeof data.error === "string" ? data.error : "Не удалось оформить заказ. Проверьте поля формы.");
+        setError(typeof data.error === "string" ? data.error : "Failed to place order. Please check the form fields.");
         return;
       }
 
@@ -33,22 +33,22 @@ export default function CheckoutPage() {
 
   return (
     <div className="mx-auto max-w-content px-6 py-12">
-      <h1 className="font-display text-3xl mb-8">Оформление заказа</h1>
+      <h1 className="font-display text-3xl mb-8">Checkout</h1>
 
       <form onSubmit={handleSubmit} className="max-w-md space-y-5">
-        <Field label="Имя" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
+        <Field label="Name" value={form.name} onChange={(v) => setForm({ ...form, name: v })} required />
         <Field label="E-mail" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} required />
-        <Field label="Телефон" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} required />
-        <Field label="Адрес доставки" value={form.address} onChange={(v) => setForm({ ...form, address: v })} required />
+        <Field label="Phone" type="tel" value={form.phone} onChange={(v) => setForm({ ...form, phone: v })} required />
+        <Field label="Delivery address" value={form.address} onChange={(v) => setForm({ ...form, address: v })} required />
 
         {error && <p className="text-sm text-clay">{error}</p>}
 
         <button type="submit" disabled={isPending} className="btn-primary w-full">
-          {isPending ? "Оформляем…" : "Оплатить заказ"}
+          {isPending ? "Processing…" : "Pay for order"}
         </button>
 
         <p className="text-xs text-ink/50">
-          Демо-режим: оплата подтверждается автоматически, заказ синхронизируется с CRM.
+          Demo mode: payment is confirmed automatically, order is synced with CRM.
         </p>
       </form>
     </div>

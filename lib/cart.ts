@@ -4,7 +4,7 @@ import { db } from "./db";
 
 const CART_COOKIE = "ns_cart_session";
 
-/** Гостевая корзина по httpOnly cookie — без регистрации. */
+/** Guest cart via httpOnly cookie — no registration required. */
 export async function getOrCreateCart() {
   const cookieStore = cookies();
   let sessionId = cookieStore.get(CART_COOKIE)?.value;
@@ -15,7 +15,7 @@ export async function getOrCreateCart() {
       httpOnly: true,
       sameSite: "lax",
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 60 * 24 * 30, // 30 дней
+      maxAge: 60 * 60 * 24 * 30, // 30 days
       path: "/",
     });
   }

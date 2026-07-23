@@ -1,18 +1,18 @@
-# NextShop — интернет-магазин
+# NextShop — E-commerce Store
 
-E-commerce на Next.js 14 (App Router) + PostgreSQL (Prisma). Каталог товаров, корзина, оформление заказа, интеграция с платежами (Stripe) и CRM.
+E-commerce on Next.js 14 (App Router) + PostgreSQL (Prisma). Product catalog, shopping cart, checkout, payment integration (Stripe) and CRM.
 
-Платежи и CRM работают в mock-режиме по умолчанию — весь флоу полностью рабочий без внешних ключей. Реальные ключи подключаются переменными окружения.
+Payments and CRM work in mock mode by default — the entire flow is fully functional without external keys. Real keys can be connected via environment variables.
 
-## Стек
+## Stack
 
-- **Next.js 14** — App Router, Server Components для каталога, Client Components для интерактива
-- **PostgreSQL + Prisma** — реляционная модель, типобезопасные запросы
-- **Stripe** — платёжный провайдер (через обёртку `lib/payment.ts`)
-- **CRM** — amoCRM-совместимый клиент (через `lib/crm.ts`)
-- **Tailwind CSS** — стилизация
+- **Next.js 14** — App Router, Server Components for catalog, Client Components for interactivity
+- **PostgreSQL + Prisma** — relational model, type-safe queries
+- **Stripe** — payment provider (via `lib/payment.ts` wrapper)
+- **CRM** — amoCRM-compatible client (via `lib/crm.ts`)
+- **Tailwind CSS** — styling
 
-## Запуск
+## Getting Started
 
 ```bash
 cp .env.example .env
@@ -22,25 +22,25 @@ npm run db:seed
 npm run dev
 ```
 
-## Структура
+## Structure
 
 ```
 app/
-  page.tsx                 — каталог (ISR 5 мин)
-  products/[slug]/page.tsx — карточка товара
-  cart/page.tsx            — корзина
-  checkout/page.tsx        — оформление заказа
+  page.tsx                 — catalog (ISR 5 min)
+  products/[slug]/page.tsx — product page
+  cart/page.tsx            — cart
+  checkout/page.tsx        — checkout
   api/
-    products/route.ts      — фильтрация каталога
-    cart/route.ts          — корзина по cookie-сессии
-    checkout/route.ts      — заказ + платёж + CRM
-    webhooks/stripe/route.ts — подтверждение оплаты
+    products/route.ts      — catalog filtering
+    cart/route.ts          — cart via cookie session
+    checkout/route.ts      — order + payment + CRM
+    webhooks/stripe/route.ts — payment confirmation
 lib/
-  db.ts       — Prisma-клиент
-  cart.ts     — гостевая корзина
-  payment.ts  — Stripe-обёртка с mock-режимом
-  crm.ts      — CRM-клиент (amoCRM / mock)
-  types.ts    — форматирование денег
+  db.ts       — Prisma client
+  cart.ts     — guest cart
+  payment.ts  — Stripe wrapper with mock mode
+  crm.ts      — CRM client (amoCRM / mock)
+  types.ts    — money formatting
 prisma/
   schema.prisma
   seed.ts

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { constructWebhookEvent } from "@/lib/payment";
 
-/** Обрабатывает подтверждения оплаты от Stripe (асинхронные webhook'и). */
+/** Handles payment confirmations from Stripe (async webhooks). */
 export async function POST(req: NextRequest) {
   const signature = req.headers.get("stripe-signature");
   const rawBody = await req.text();
@@ -37,10 +37,10 @@ export async function POST(req: NextRequest) {
       break;
     }
     default:
-      // Пропускаем нерелевантные события
+      // Skip irrelevant events
       break;
   }
 
-  // Stripe требует быстрый 2xx, иначе ретраи
+  // Stripe requires a quick 2xx response, otherwise it retries
   return NextResponse.json({ received: true });
 }

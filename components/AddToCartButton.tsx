@@ -26,14 +26,14 @@ export default function AddToCartButton({ productId, inStock }: { productId: str
   if (!inStock) {
     return (
       <button className="btn-secondary w-full" disabled>
-        Нет в наличии
+        Out of stock
       </button>
     );
   }
 
   return (
     <button onClick={handleAdd} disabled={isPending} className="btn-primary w-full">
-      {isPending ? "Добавляем…" : added ? "Добавлено ✓" : "В корзину"}
+      {isPending ? "Adding…" : added ? "Added ✓" : "Add to cart"}
     </button>
   );
 }
