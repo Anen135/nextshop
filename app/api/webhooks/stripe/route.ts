@@ -2,14 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { constructWebhookEvent } from "@/lib/payment";
 
-/**
- * Обрабатывает подтверждения оплаты от Stripe.
- *
- * Почему статус заказа обновляется здесь, а не сразу в /api/checkout:
- * PaymentIntent может подтвердиться асинхронно (3-D Secure, банковский перевод),
- * поэтому единственный надёжный источник истины об оплате — webhook,
- * а не ответ синхронного запроса создания заказа.
- */
+/** Обрабатывает подтверждения оплаты от Stripe (асинхронные webhook'и). */
 export async function POST(req: NextRequest) {
   const signature = req.headers.get("stripe-signature");
   const rawBody = await req.text();
@@ -44,10 +37,10 @@ export async function POST(req: NextRequest) {
       break;
     }
     default:
-      // Игнорируем неинтересные для нас типы событий
+      // Пропускаем нерелевантные события
       break;
   }
 
-  // Stripe требует быстрый ответ 2xx, иначе будет ретраить webhook
+  // Stripe требует быстрый 2xx, иначе ретраи
   return NextResponse.json({ received: true });
 }

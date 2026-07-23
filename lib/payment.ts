@@ -1,21 +1,10 @@
 import Stripe from "stripe";
 
-/**
- * Тонкая обёртка над Stripe.
- *
- * Зачем обёртка, а не прямой вызов Stripe по всему коду:
- * 1. Единая точка для смены провайдера (ЮKassa/CloudPayments для РФ-рынка
- *    имеют похожий API — достаточно переписать этот файл).
- * 2. Тестируемость: в юнит-тестах можно замокать этот модуль целиком.
- * 3. Явный контракт (createPaymentIntent / verifyWebhook) вместо утечки
- *    деталей Stripe SDK в бизнес-логику checkout.
- */
+/** Обёртка над Stripe — единая точка для смены платёжного провайдера. */
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 
-// В демо-режиме (без ключей) сервис не падает, а работает в "mock"-режиме —
-// это важно для портфолио: проект должен запускаться и без реальных
-// платёжных credentials.
+// Без ключей — мок-режим, чтобы проект запускался без реальных credentials
 const isMock = !stripeSecretKey;
 
 const stripe = stripeSecretKey
@@ -39,8 +28,7 @@ export async function createPaymentIntent(
   params: CreatePaymentIntentParams
 ): Promise<PaymentIntentResult> {
   if (isMock || !stripe) {
-    // Мок-режим — эмулируем моментальный успешный платёж, чтобы можно было
-    // пройти весь флоу оформления заказа без ключей Stripe.
+    // Мок-режим: эмулируем успешный платёж без ключей Stripe
     return {
       id: `pi_mock_${params.orderId}`,
       clientSecret: `pi_mock_${params.orderId}_secret`,
@@ -63,10 +51,7 @@ export async function createPaymentIntent(
   };
 }
 
-/**
- * Проверяет подпись входящего Stripe webhook, чтобы исключить поддельные
- * запросы на /api/webhooks/stripe. Обязательный шаг в проде.
- */
+/** Проверяет подпись Stripe webhook. */
 export function constructWebhookEvent(rawBody: string, signature: string): Stripe.Event {
   if (isMock || !stripe) {
     throw new Error("Webhook verification requires a real STRIPE_SECRET_KEY");

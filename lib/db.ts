@@ -1,8 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-// Стандартный паттерн для Next.js: в dev-режиме модуль переимпортируется
-// при каждом hot-reload, поэтому кэшируем клиент в globalThis, чтобы не
-// открывать новый пул соединений с PostgreSQL при каждом запросе.
+// Кэшируем PrismaClient в globalThis — dev-режим переимпортирует модуль при hot-reload
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 export const db =

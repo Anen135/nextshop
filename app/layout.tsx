@@ -4,12 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { CartProvider } from "@/components/CartProvider";
 
-// next/font самостоятельно инлайнит @font-face и хостит шрифты локально —
-// это устраняет лишний внешний запрос и предотвращает сдвиг макета (CLS)
-// при подгрузке веб-шрифтов, что напрямую влияет на Core Web Vitals.
-// PT Serif выбран как display-шрифт вместо более "модных" вариантов
-// (Fraunces, Playfair) потому что у них нет кириллического начертания —
-// а контент магазина на русском.
+// PT Serif — с кириллицей, в отличие от Fraunces/Playfair
 const display = PT_Serif({
   subsets: ["latin", "cyrillic"],
   weight: ["400", "700"],

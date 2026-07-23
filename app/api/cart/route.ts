@@ -16,7 +16,7 @@ const addItemSchema = z.object({
   quantity: z.number().int().min(1).max(99).default(1),
 });
 
-// POST /api/cart — добавить товар (или увеличить количество)
+// POST /api/cart — добавить товар
 export async function POST(req: NextRequest) {
   const body = addItemSchema.safeParse(await req.json());
   if (!body.success) {

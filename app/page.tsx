@@ -7,8 +7,6 @@ export const metadata: Metadata = {
   description: "Мебель, свет, текстиль и керамика для дома — каталог NextShop.",
 };
 
-// ISR: каталог перестраивается раз в 5 минут, а не на каждый запрос —
-// баланс между свежестью данных (остатки, цены) и Core Web Vitals/нагрузкой на БД.
 export const revalidate = 300;
 
 const categories = [

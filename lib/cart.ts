@@ -4,12 +4,7 @@ import { db } from "./db";
 
 const CART_COOKIE = "ns_cart_session";
 
-/**
- * Возвращает (и при необходимости создаёт) корзину текущего посетителя.
- * Гостевая корзина identified по httpOnly cookie — так корзина переживает
- * обновление страницы и работает без авторизации, что важно для
- * конверсии в e-commerce (лишний шаг регистрации отсекает пользователей).
- */
+/** Гостевая корзина по httpOnly cookie — без регистрации. */
 export async function getOrCreateCart() {
   const cookieStore = cookies();
   let sessionId = cookieStore.get(CART_COOKIE)?.value;

@@ -12,18 +12,7 @@ const checkoutSchema = z.object({
   address: z.string().min(5, "Укажите адрес доставки"),
 });
 
-/**
- * Оформление заказа — центральный сценарий магазина, поэтому он делает всё
- * последовательно и явно, без скрытой магии:
- *
- *   1. Валидация данных покупателя.
- *   2. Проверка, что корзина не пуста и товары ещё в наличии.
- *   3. Создание Customer + Order + OrderItem в одной транзакции —
- *      либо заказ создаётся целиком, либо не создаётся вовсе.
- *   4. Создание PaymentIntent у провайдера (Stripe/мок).
- *   5. Синхронизация сделки с CRM (не блокирует ответ пользователю при сбое —
- *      см. комментарий ниже).
- */
+/** Оформление заказа: валидация, списание, платёж, CRM. */
 export async function POST(req: NextRequest) {
   const parsed = checkoutSchema.safeParse(await req.json());
   if (!parsed.success) {
@@ -75,8 +64,7 @@ export async function POST(req: NextRequest) {
       include: { items: { include: { product: true } }, customer: true },
     });
 
-    // Резервируем товар: списываем со склада сразу при создании заказа,
-    // чтобы исключить перепродажу, пока покупатель на экране оплаты.
+    // Списываем со склада сразу, чтобы исключить перепродажу
     for (const item of cart.items) {
       await tx.product.update({
         where: { id: item.productId },
@@ -84,7 +72,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Корзина очищается после успешного оформления заказа
+    // Очищаем корзину
     await tx.cartItem.deleteMany({ where: { cartId: cart.id } });
 
     return created;
@@ -102,9 +90,7 @@ export async function POST(req: NextRequest) {
     data: { paymentIntentId: paymentIntent.id },
   });
 
-  // CRM-синхронизация не должна ронять оформление заказа: если CRM недоступна,
-  // покупатель всё равно должен получить подтверждение заказа и ссылку на оплату.
-  // Ошибка логируется для последующей ручной/фоновой досинхронизации.
+  // CRM-синхронизация не должна ронять оформление — пробрасываем ошибку в лог
   try {
     const crm = getCrmClient();
     const { dealId } = await crm.upsertDeal(order);

@@ -13,8 +13,7 @@ async function getProduct(slug: string) {
   return db.product.findUnique({ where: { slug }, include: { category: true } });
 }
 
-// generateStaticParams позволяет пререндерить карточки товаров в билд-тайме —
-// пользователи получают их как статику, ускоряя LCP и снимая нагрузку с БД.
+// Пререндерим карточки товаров статически в билд-тайме
 export async function generateStaticParams() {
   const products = await db.product.findMany({ select: { slug: true } });
   return products.map((p) => ({ slug: p.slug }));
@@ -39,8 +38,7 @@ export default async function ProductPage({ params }: Props) {
   const product = await getProduct(params.slug);
   if (!product) notFound();
 
-  // JSON-LD Product — даёт поисковикам структурированные данные о цене и
-  // наличии, что открывает путь к rich snippets в выдаче Google/Яндекс.
+  // JSON-LD Product для rich snippets в поисковиках
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",

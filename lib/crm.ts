@@ -1,12 +1,4 @@
-/**
- * Интеграция с CRM.
- *
- * Задача этого модуля — при оплаченном заказе создать/обновить контакт и
- * сделку в CRM, чтобы отдел продаж видел заказы из интернет-магазина в
- * привычном интерфейсе. Реализовано как провайдер-агностичный интерфейс:
- * конкретная система (amoCRM, HubSpot, Bitrix24) подключается через
- * CRM_PROVIDER без изменений в бизнес-логике заказа.
- */
+/** Интеграция с CRM: создаёт контакт и сделку при оплате заказа. */
 
 import type { Order, Customer, OrderItem, Product } from "@prisma/client";
 
@@ -21,7 +13,7 @@ export interface CrmClient {
 
 const provider = process.env.CRM_PROVIDER ?? "mock";
 
-/** amoCRM: сделки создаются через Leads API, контакт привязывается к сделке. */
+/** amoCRM: сделки через Leads API. */
 class AmoCrmClient implements CrmClient {
   private baseUrl = process.env.CRM_API_URL;
   private token = process.env.CRM_API_TOKEN;
@@ -37,7 +29,7 @@ class AmoCrmClient implements CrmClient {
       "Content-Type": "application/json",
     };
 
-    // 1. Находим или создаём контакт по email заказчика
+    // Создаём контакт по email
     const contactRes = await fetch(`${this.baseUrl}/contacts`, {
       method: "POST",
       headers,
@@ -54,7 +46,7 @@ class AmoCrmClient implements CrmClient {
     const contactData = await contactRes.json();
     const contactId = contactData._embedded?.contacts?.[0]?.id?.toString() ?? "";
 
-    // 2. Создаём сделку и линкуем контакт
+    // Создаём сделку, привязываем контакт
     const dealRes = await fetch(`${this.baseUrl}/leads`, {
       method: "POST",
       headers,
@@ -74,7 +66,7 @@ class AmoCrmClient implements CrmClient {
   }
 }
 
-/** Мок-клиент — используется по умолчанию, чтобы демо работало без реальных API-ключей CRM. */
+/** Мок-клиент, чтобы демо работало без ключей CRM. */
 class MockCrmClient implements CrmClient {
   async upsertDeal(order: OrderWithRelations) {
     console.log(

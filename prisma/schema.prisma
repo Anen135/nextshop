@@ -1,7 +1,4 @@
 // Схема данных интернет-магазина.
-// Спроектирована с расчётом на реальные объёмы: индексы под частые
-// выборки каталога, денежные суммы в минимальных единицах (центы/копейки),
-// разделение Product (карточка) и ProductVariant (SKU) на будущее.
 
 generator client {
   provider = "prisma-client-js"
@@ -26,8 +23,7 @@ model Product {
   slug        String   @unique
   title       String
   description String
-  // Цена хранится в минимальных единицах валюты (копейки), чтобы избежать
-  // ошибок округления с float — стандартная практика для e-commerce.
+  // Цена в копейках — без ошибок округления float
   priceCents  Int
   currency    String   @default("RUB")
   imageUrl    String
@@ -49,7 +45,7 @@ model Customer {
   email     String   @unique
   name      String?
   phone     String?
-  // Внешний ID сделки/контакта в CRM — позволяет избежать дублей при синхронизации
+  // Внешний ID сделки/контакта в CRM
   crmContactId String?
   createdAt DateTime @default(now())
 
@@ -59,7 +55,7 @@ model Customer {
 
 model Cart {
   id         String     @id @default(cuid())
-  // Гостевая корзина идентифицируется по cookie до момента оформления заказа
+  // Гостевая корзина по cookie
   sessionId  String     @unique
   customerId String?
   customer   Customer?  @relation(fields: [customerId], references: [id])
@@ -100,8 +96,7 @@ model Order {
   shippingPhone  String
   shippingAddress String
 
-  // Ключи внешних систем: платёжного провайдера и CRM.
-  // Хранятся здесь, а не выводятся, чтобы webhook'и были идемпотентны.
+  // Ключи платежного провайдера и CRM — для идемпотентности webhook'ов
   paymentIntentId String? @unique
   crmDealId       String?
 
@@ -120,6 +115,6 @@ model OrderItem {
   productId  String
   product    Product @relation(fields: [productId], references: [id])
   quantity   Int
-  // Фиксируем цену на момент покупки — цена товара может измениться позже
+  // Цена на момент покупки
   priceCents Int
 }

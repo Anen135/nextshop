@@ -1,9 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // React Strict Mode ловит побочные эффекты ещё на этапе разработки
   reactStrictMode: true,
 
-  // Современные форматы изображений + явные размеры уменьшают CLS и LCP
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
@@ -12,8 +10,7 @@ const nextConfig = {
     ],
   },
 
-  // Убираем заголовок X-Powered-By и добавляем базовые security-заголовки —
-  // это тоже часть "производственной культуры", которую полезно показать в портфолио
+  // Basic security headers
   poweredByHeader: false,
   async headers() {
     return [
@@ -29,7 +26,6 @@ const nextConfig = {
   },
 
   experimental: {
-    // Оптимизация серверных пакетов, которые не нужно бандлить на клиенте
     serverComponentsExternalPackages: ["@prisma/client"],
   },
 };
