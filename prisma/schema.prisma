@@ -1,0 +1,125 @@
+// Схема данных интернет-магазина.
+// Спроектирована с расчётом на реальные объёмы: индексы под частые
+// выборки каталога, денежные суммы в минимальных единицах (центы/копейки),
+// разделение Product (карточка) и ProductVariant (SKU) на будущее.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String
+  slug     String    @unique
+  products Product[]
+
+  @@index([slug])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String
+  // Цена хранится в минимальных единицах валюты (копейки), чтобы избежать
+  // ошибок округления с float — стандартная практика для e-commerce.
+  priceCents  Int
+  currency    String   @default("RUB")
+  imageUrl    String
+  stock       Int      @default(0)
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@index([categoryId])
+  @@index([title])
+}
+
+model Customer {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  phone     String?
+  // Внешний ID сделки/контакта в CRM — позволяет избежать дублей при синхронизации
+  crmContactId String?
+  createdAt DateTime @default(now())
+
+  orders Order[]
+  carts  Cart[]
+}
+
+model Cart {
+  id         String     @id @default(cuid())
+  // Гостевая корзина идентифицируется по cookie до момента оформления заказа
+  sessionId  String     @unique
+  customerId String?
+  customer   Customer?  @relation(fields: [customerId], references: [id])
+  items      CartItem[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int     @default(1)
+
+  @@unique([cartId, productId])
+}
+
+enum OrderStatus {
+  PENDING_PAYMENT
+  PAID
+  FAILED
+  FULFILLED
+  CANCELLED
+}
+
+model Order {
+  id             String      @id @default(cuid())
+  number         String      @unique // человекочитаемый номер заказа, напр. NS-100245
+  customerId     String
+  customer       Customer    @relation(fields: [customerId], references: [id])
+  status         OrderStatus @default(PENDING_PAYMENT)
+  totalCents     Int
+  currency       String      @default("RUB")
+  shippingName   String
+  shippingEmail  String
+  shippingPhone  String
+  shippingAddress String
+
+  // Ключи внешних систем: платёжного провайдера и CRM.
+  // Хранятся здесь, а не выводятся, чтобы webhook'и были идемпотентны.
+  paymentIntentId String? @unique
+  crmDealId       String?
+
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([customerId])
+  @@index([status])
+}
+
+model OrderItem {
+  id         String  @id @default(cuid())
+  orderId    String
+  order      Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product @relation(fields: [productId], references: [id])
+  quantity   Int
+  // Фиксируем цену на момент покупки — цена товара может измениться позже
+  priceCents Int
+}
